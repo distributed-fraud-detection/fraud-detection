@@ -1,0 +1,84 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  # Redis for rate limiting
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+  cloud:
+    gateway:
+      routes:
+        # ── Transaction Service ─────────────────────────────────────────────
+        - id: transaction-service
+          uri: http://${TRANSACTION_SERVICE_HOST:localhost}:8081
+          predicates:
+            - Path=/api/transactions/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                key-resolver: "#{@ipKeyResolver}"
+
+        # ── Fraud Decision Service ──────────────────────────────────────────
+        - id: fraud-decision-service
+          uri: http://${FRAUD_DECISION_SERVICE_HOST:localhost}:8083
+          predicates:
+            - Path=/api/fraud-cases/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                key-resolver: "#{@ipKeyResolver}"
+
+        # ── Analytics Service ───────────────────────────────────────────────
+        - id: analytics-service
+          uri: http://${ANALYTICS_SERVICE_HOST:localhost}:8085
+          predicates:
+            - Path=/api/analytics/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 5
+                redis-rate-limiter.burstCapacity: 10
+                key-resolver: "#{@ipKeyResolver}"
+
+      # Add CORS headers globally
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        cors-configurations:
+          "[/**]":
+            allowedOrigins:
+              - "http://localhost:5173" # Vite dev server
+              - "http://localhost:3000" # CRA / production frontend
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+
+  # ── Security: permit all for local dev ──────────────────────────────────────
+  # OAuth2 JWT is disabled by default so the React frontend works without tokens.
+  # To enable in production, uncomment the security block below and set
+  # OAUTH2_ISSUER_URI to your auth provider (e.g. https://accounts.google.com).
+  #
+  # security:
+  #   oauth2:
+  #     resourceserver:
+  #       jwt:
+  #         issuer-uri: ${OAUTH2_ISSUER_URI:https://accounts.google.com}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    health:
+      show-details: always

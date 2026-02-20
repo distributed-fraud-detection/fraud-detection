@@ -1,0 +1,22 @@
+# Test profile — uses H2 in-memory DB and EmbeddedKafka (port 9095)
+spring:
+  datasource:
+    url: jdbc:h2:mem:decisiontest;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+
+  kafka:
+    bootstrap-servers: localhost:9095 # EmbeddedKafka port
+    consumer:
+      bootstrap-servers: localhost:9095
+    producer:
+      bootstrap-servers: localhost:9095
+
+logging:
+  level:
+    com.frauddetection: DEBUG

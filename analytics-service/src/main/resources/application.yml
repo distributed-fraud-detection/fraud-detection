@@ -1,0 +1,44 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: analytics-service
+
+  # Primary datasource: analytics_db (owns AggregatedMetric + Spring Batch tables)
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5436}/analytics_db
+    username: ${DB_USER:fraud_user}
+    password: ${DB_PASS:fraud_pass}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: AnalyticsHikariPool
+      maximum-pool-size: 5
+      minimum-idle: 1
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # Spring Batch — don't run job on startup; controlled via schedule/REST
+  batch:
+    job:
+      enabled: false
+
+# Secondary datasource: read fraud cases from fraud_db across services
+fraud:
+  datasource:
+    url: jdbc:postgresql://${FRAUD_DB_HOST:localhost}:${FRAUD_DB_PORT:5434}/fraud_db
+    username: ${DB_USER:fraud_user}
+    password: ${DB_PASS:fraud_pass}
+    driver-class-name: org.postgresql.Driver
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,batch

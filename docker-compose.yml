@@ -1,0 +1,341 @@
+version: "3.9"
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Real-Time Fraud Detection Platform — Docker Compose
+# ──────────────────────────────────────────────────────────────────────────────
+# Ports exposed:
+#   3000  fraud-detection-ui  (React frontend)
+#   8080  api-gateway         (Spring Cloud Gateway)
+#   8081  transaction-service
+#   8082  risk-engine-service
+#   8083  fraud-decision-service
+#   8084  notification-service
+#   8085  analytics-service
+#   8090  kafka-ui            (Kafka topic browser)
+#   9092  kafka
+#   6379  redis
+#   5432  transactions_db
+#   5433  risk_db
+#   5434  fraud_db
+#   5435  notification_db
+#   5436  analytics_db
+# ──────────────────────────────────────────────────────────────────────────────
+
+x-common-env: &common-env
+  KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  DB_USER: fraud_user
+  DB_PASS: fraud_pass
+  DB_HOST: "" # overridden per service
+
+x-spring-boot-healthcheck: &spring-boot-healthcheck
+  test: ["CMD", "curl", "-f", "http://localhost:${PORT:-8080}/actuator/health"]
+  interval: 30s
+  timeout: 10s
+  retries: 5
+  start_period: 60s
+
+services:
+  # ── Zookeeper ───────────────────────────────────────────────────────────────
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    healthcheck:
+      test: ["CMD", "echo", "ruok", "|", "nc", "localhost", "2181"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ── Kafka ───────────────────────────────────────────────────────────────────
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # PLAINTEXT   = internal Docker network (service→service)
+      # PLAINTEXT_HOST = host machine access (e.g. local dev tools)
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "kafka-broker-api-versions",
+          "--bootstrap-server",
+          "localhost:9092",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # ── Kafka UI ────────────────────────────────────────────────────────────────
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8090:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: fraud-detection
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+
+  # ── Redis ───────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ── PostgreSQL — transactions_db (port 5432) ────────────────────────────────
+  postgres-transactions:
+    image: postgres:16-alpine
+    container_name: postgres-transactions
+    environment:
+      POSTGRES_DB: transactions_db
+      POSTGRES_USER: fraud_user
+      POSTGRES_PASSWORD: fraud_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - transactions-data:/var/lib/postgresql/data
+      - ./init-scripts/01-transactions-db.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fraud_user -d transactions_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── PostgreSQL — risk_db (port 5433) ───────────────────────────────────────
+  postgres-risk:
+    image: postgres:16-alpine
+    container_name: postgres-risk
+    environment:
+      POSTGRES_DB: risk_db
+      POSTGRES_USER: fraud_user
+      POSTGRES_PASSWORD: fraud_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - risk-data:/var/lib/postgresql/data
+      - ./init-scripts/02-risk-db.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fraud_user -d risk_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── PostgreSQL — fraud_db (port 5434) ─────────────────────────────────────
+  postgres-fraud:
+    image: postgres:16-alpine
+    container_name: postgres-fraud
+    environment:
+      POSTGRES_DB: fraud_db
+      POSTGRES_USER: fraud_user
+      POSTGRES_PASSWORD: fraud_pass
+    ports:
+      - "5434:5432"
+    volumes:
+      - fraud-data:/var/lib/postgresql/data
+      - ./init-scripts/03-fraud-db.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fraud_user -d fraud_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── PostgreSQL — notification_db (port 5435) ─────────────────────────────
+  postgres-notification:
+    image: postgres:16-alpine
+    container_name: postgres-notification
+    environment:
+      POSTGRES_DB: notification_db
+      POSTGRES_USER: fraud_user
+      POSTGRES_PASSWORD: fraud_pass
+    ports:
+      - "5435:5432"
+    volumes:
+      - notification-data:/var/lib/postgresql/data
+      - ./init-scripts/04-notification-db.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fraud_user -d notification_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── PostgreSQL — analytics_db (port 5436) ────────────────────────────────
+  postgres-analytics:
+    image: postgres:16-alpine
+    container_name: postgres-analytics
+    environment:
+      POSTGRES_DB: analytics_db
+      POSTGRES_USER: fraud_user
+      POSTGRES_PASSWORD: fraud_pass
+    ports:
+      - "5436:5432"
+    volumes:
+      - analytics-data:/var/lib/postgresql/data
+      - ./init-scripts/05-analytics-db.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fraud_user -d analytics_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── API Gateway (port 8080) ───────────────────────────────────────────────
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    depends_on:
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      <<: *common-env
+      REDIS_HOST: redis
+
+  # ── Transaction Service (port 8081) ──────────────────────────────────────
+  transaction-service:
+    build:
+      context: ./transaction-service
+      dockerfile: Dockerfile
+    container_name: transaction-service
+    depends_on:
+      postgres-transactions:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    environment:
+      <<: *common-env
+      DB_HOST: postgres-transactions
+      DB_PORT: 5432
+
+  # ── Risk Engine Service (port 8082) ──────────────────────────────────────
+  risk-engine-service:
+    build:
+      context: ./risk-engine-service
+      dockerfile: Dockerfile
+    container_name: risk-engine-service
+    depends_on:
+      postgres-risk:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8082:8082"
+    environment:
+      <<: *common-env
+      DB_HOST: postgres-risk
+      DB_PORT: 5432
+
+  # ── Fraud Decision Service (port 8083) ────────────────────────────────────
+  fraud-decision-service:
+    build:
+      context: ./fraud-decision-service
+      dockerfile: Dockerfile
+    container_name: fraud-decision-service
+    depends_on:
+      postgres-fraud:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8083:8083"
+    environment:
+      <<: *common-env
+      DB_HOST: postgres-fraud
+      DB_PORT: 5432
+
+  # ── Notification Service (port 8084) ─────────────────────────────────────
+  notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    container_name: notification-service
+    depends_on:
+      postgres-notification:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8084:8084"
+    environment:
+      <<: *common-env
+      DB_HOST: postgres-notification
+      DB_PORT: 5432
+
+  # ── Analytics Service (port 8085) ────────────────────────────────────────
+  analytics-service:
+    build:
+      context: ./analytics-service
+      dockerfile: Dockerfile
+    container_name: analytics-service
+    depends_on:
+      postgres-analytics:
+        condition: service_healthy
+      postgres-fraud:
+        condition: service_healthy
+    ports:
+      - "8085:8085"
+    environment:
+      <<: *common-env
+      DB_HOST: postgres-analytics
+      DB_PORT: 5432
+      FRAUD_DB_HOST: postgres-fraud
+      FRAUD_DB_PORT: 5432
+
+  # ── React Frontend (port 3000) ────────────────────────────────────────────
+  fraud-detection-ui:
+    build:
+      context: ../fraud-detection-ui
+      dockerfile: Dockerfile
+    container_name: fraud-detection-ui
+    depends_on:
+      - api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_API_BASE_URL: http://localhost:8080
+
+volumes:
+  transactions-data:
+  risk-data:
+  fraud-data:
+  notification-data:
+  analytics-data:
