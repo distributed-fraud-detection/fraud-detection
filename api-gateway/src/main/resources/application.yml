@@ -63,16 +63,18 @@ spring:
             allowedHeaders: "*"
             allowCredentials: true
 
-  # ── Security: permit all for local dev ──────────────────────────────────────
-  # OAuth2 JWT is disabled by default so the React frontend works without tokens.
-  # To enable in production, uncomment the security block below and set
-  # OAUTH2_ISSUER_URI to your auth provider (e.g. https://accounts.google.com).
-  #
-  # security:
-  #   oauth2:
-  #     resourceserver:
-  #       jwt:
-  #         issuer-uri: ${OAUTH2_ISSUER_URI:https://accounts.google.com}
+  # ── Security (enabled only when OAUTH2_ENABLED=true) ─────────────────────
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OAUTH2_ISSUER_URI:https://accounts.google.com}
+
+
+app:
+  security:
+    oauth2:
+      enabled: ${OAUTH2_ENABLED:false}
 
 management:
   endpoints:
