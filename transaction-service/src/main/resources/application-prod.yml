@@ -1,0 +1,47 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# application-prod.yml — transaction-service
+# PRODUCTION overrides. Applied when SPRING_PROFILES_ACTIVE=prod
+# ──────────────────────────────────────────────────────────────────────────────
+
+spring:
+  jpa:
+    hibernate:
+      # CRITICAL: 'update' mutates schemas on start — NEVER in production.
+      # Use 'validate' so Hibernate checks schema == entity model at startup
+      # and fails fast if there is a drift. Schema changes go through Flyway/Liquibase.
+      ddl-auto: validate
+    show-sql: false
+
+  datasource:
+    hikari:
+      pool-name: TransactionHikariPool-Prod
+      maximum-pool-size: 20 # Tune for your pod count × DB connection limit
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+
+  # Kafka producer — production-grade settings
+  kafka:
+    producer:
+      acks: all # Wait for all replicas to acknowledge
+      retries: 3
+      properties:
+        enable.idempotence: true
+        max.in.flight.requests.per.connection: 1
+
+# Actuator — restrict detail exposure in prod
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+
+logging:
+  level:
+    root: WARN
+    com.frauddetection: INFO

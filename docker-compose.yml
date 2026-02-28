@@ -25,9 +25,11 @@ x-common-env: &common-env
   KAFKA_BOOTSTRAP_SERVERS: kafka:9092
   REDIS_HOST: redis
   REDIS_PORT: 6379
-  DB_USER: fraud_user
-  DB_PASS: fraud_pass
+  REDIS_PASSWORD: ${REDIS_PASSWORD:-}   # Set in .env file or CI/CD secrets for prod
+  DB_USER: ${DB_USER:-fraud_user}
+  DB_PASS: ${DB_PASS:-fraud_pass}
   DB_HOST: "" # overridden per service
+  SPRING_PROFILES_ACTIVE: prod           # Activates application-prod.yml in all services
 
 x-spring-boot-healthcheck: &spring-boot-healthcheck
   test: ["CMD", "curl", "-f", "http://localhost:${PORT:-8080}/actuator/health"]
@@ -72,7 +74,7 @@ services:
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"  # Topics are pre-provisioned; auto-create masks mis-spelled topic names
     healthcheck:
       test:
         [
@@ -105,7 +107,7 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
-    command: redis-server --save 60 1 --loglevel warning
+    command: redis-server --save 60 1 --loglevel warning --requirepass "${REDIS_PASSWORD:-}"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s

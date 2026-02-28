@@ -1,25 +1,15 @@
-# Test profile — uses H2 in-memory DB and EmbeddedKafka (port 9093)
+# Test profile — Testcontainers provides REAL PostgreSQL, Kafka and Redis.
+# URLs/ports are overridden at runtime via @DynamicPropertySource in AbstractIntegrationTest.
 spring:
-  datasource:
-    url: jdbc:h2:mem:txtest;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    database-platform: org.hibernate.dialect.H2Dialect
-
-  data:
-    redis:
-      host: localhost
-      port: 6379
-
-  kafka:
-    bootstrap-servers: localhost:9093 # EmbeddedKafka port
-    producer:
-      bootstrap-servers: localhost:9093
+      ddl-auto: create-drop # fresh schema each test run
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 logging:
   level:
     com.frauddetection: DEBUG
+    org.springframework.kafka: WARN

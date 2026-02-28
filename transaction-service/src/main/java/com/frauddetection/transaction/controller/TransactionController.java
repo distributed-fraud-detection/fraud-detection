@@ -1,7 +1,7 @@
 package com.frauddetection.transaction.controller;
 
 import com.frauddetection.common.dto.TransactionDTO;
-import com.frauddetection.transaction.service.ITransactionService;
+import com.frauddetection.transaction.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransactionController {
 
-    private final ITransactionService transactionService; // DIP: interface, not concrete class
+    private final TransactionService transactionService; // DIP: interface, not concrete class
+
 
     /**
      * Submit a new transaction for fraud screening.

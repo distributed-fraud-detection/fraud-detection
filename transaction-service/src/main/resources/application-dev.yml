@@ -1,0 +1,26 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# application-dev.yml — transaction-service
+# DEV overrides. Applied when SPRING_PROFILES_ACTIVE=dev
+# ──────────────────────────────────────────────────────────────────────────────
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update # Auto-create/update schema in dev — convenient
+    show-sql: true # Log SQL so devs can debug queries
+
+  datasource:
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+
+management:
+  endpoint:
+    health:
+      show-details: always # Full health details OK in dev
+
+logging:
+  level:
+    root: INFO
+    com.frauddetection: DEBUG
+    org.springframework.kafka: DEBUG

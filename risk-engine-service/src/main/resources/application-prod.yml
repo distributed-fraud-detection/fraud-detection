@@ -1,0 +1,39 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# application-prod.yml — risk-engine-service
+# ──────────────────────────────────────────────────────────────────────────────
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  datasource:
+    hikari:
+      pool-name: RiskHikariPool-Prod
+      maximum-pool-size: 15
+      minimum-idle: 3
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+
+  kafka:
+    consumer:
+      properties:
+        max.poll.records: 100
+        session.timeout.ms: 30000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+
+logging:
+  level:
+    root: WARN
+    com.frauddetection: INFO

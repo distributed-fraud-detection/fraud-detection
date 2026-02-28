@@ -24,6 +24,7 @@
 
     <properties>
         <java.version>25</java.version>
+        <lombok.version>1.18.42</lombok.version>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -59,7 +60,22 @@
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.36</version>
+                <version>1.18.42</version>
+            </dependency>
+            <!-- ── Testcontainers BOM (manages all testcontainers module versions) ── -->
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>1.20.4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- WireMock standalone — HTTP stub server for integration tests -->
+            <dependency>
+                <groupId>org.wiremock</groupId>
+                <artifactId>wiremock-standalone</artifactId>
+                <version>3.9.1</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -74,6 +90,22 @@
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
+                        <!--
+                          Java 25 no longer auto-discovers annotation processors from the
+                          compile classpath. Lombok must be declared explicitly here.
+                          Without this, @Builder, @Getter, @Slf4j etc. silently produce
+                          "cannot find symbol" errors at compile time.
+                        -->
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                        <compilerArgs>
+                            <arg>-proc:full</arg>
+                        </compilerArgs>
                     </configuration>
                 </plugin>
             </plugins>

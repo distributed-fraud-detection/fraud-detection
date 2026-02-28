@@ -1,24 +1,224 @@
-﻿[INFO] Scanning for projects...
-[ERROR] [ERROR] Some problems were encountered while processing the POMs:
-[ERROR] Child module D:\Projects\fraud-detection\api-gateway of D:\Projects\fraud-detection\pom.xml does not exist @ 
-[ERROR] Child module D:\Projects\fraud-detection\transaction-service of D:\Projects\fraud-detection\pom.xml does not exist @ 
-[ERROR] Child module D:\Projects\fraud-detection\risk-engine-service of D:\Projects\fraud-detection\pom.xml does not exist @ 
-[ERROR] Child module D:\Projects\fraud-detection\fraud-decision-service of D:\Projects\fraud-detection\pom.xml does not exist @ 
-[ERROR] Child module D:\Projects\fraud-detection\notification-service of D:\Projects\fraud-detection\pom.xml does not exist @ 
-[ERROR] Child module D:\Projects\fraud-detection\analytics-service of D:\Projects\fraud-detection\pom.xml does not exist @ 
- @ 
-[ERROR] The build could not read 1 project -> [Help 1]
-[ERROR]   
-[ERROR]   The project com.frauddetection:fraud-detection-platform:1.0.0-SNAPSHOT (D:\Projects\fraud-detection\pom.xml) has 6 errors
-[ERROR]     Child module D:\Projects\fraud-detection\api-gateway of D:\Projects\fraud-detection\pom.xml does not exist
-[ERROR]     Child module D:\Projects\fraud-detection\transaction-service of D:\Projects\fraud-detection\pom.xml does not exist
-[ERROR]     Child module D:\Projects\fraud-detection\risk-engine-service of D:\Projects\fraud-detection\pom.xml does not exist
-[ERROR]     Child module D:\Projects\fraud-detection\fraud-decision-service of D:\Projects\fraud-detection\pom.xml does not exist
-[ERROR]     Child module D:\Projects\fraud-detection\notification-service of D:\Projects\fraud-detection\pom.xml does not exist
-[ERROR]     Child module D:\Projects\fraud-detection\analytics-service of D:\Projects\fraud-detection\pom.xml does not exist
+﻿mvn : WARNING: A 
+restricted method in 
+java.lang.System has 
+been called
+At line:1 char:97
++ ...  $env:Path; mvn 
+clean install 
+-DskipTests 
+--no-transfer-progress 
+2>&1 ...
++                 ~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (WARNING: A re   
+ st...has been call    
+ed:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+WARNING: 
+java.lang.System::load 
+has been called by org.
+fusesource.jansi.intern
+al.JansiLoader in an 
+unnamed module (file:/C
+:/Program%20Files/apach
+e-maven-3.9.9/lib/jansi
+-2.4.1.jar)
+WARNING: Use --enable-n
+ative-access=ALL-UNNAME
+D to avoid a warning 
+for callers in this 
+module
+WARNING: Restricted 
+methods will be 
+blocked in a future 
+release unless native 
+access is enabled
+
+WARNING: A terminally 
+deprecated method in 
+sun.misc.Unsafe has 
+been called
+WARNING: sun.misc.Unsaf
+e::objectFieldOffset 
+has been called by com.
+google.common.util.conc
+urrent.AbstractFuture$U
+nsafeAtomicHelper (file
+:/C:/Program%20Files/ap
+ache-maven-3.9.9/lib/gu
+ava-33.2.1-jre.jar)
+WARNING: Please 
+consider reporting 
+this to the 
+maintainers of class co
+m.google.common.util.co
+ncurrent.AbstractFuture
+$UnsafeAtomicHelper
+WARNING: sun.misc.Unsaf
+e::objectFieldOffset 
+will be removed in a 
+future release
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] Fraud Detection Platform                                           [pom]
+[INFO] Common Shared Library                                              [jar]
+[INFO] API Gateway                                                        [jar]
+[INFO] Transaction Service                                                [jar]
+[INFO] Risk Engine Service                                                [jar]
+[INFO] Fraud Decision Service                                             [jar]
+[INFO] Notification Service                                               [jar]
+[INFO] Analytics Service                                                  [jar]
+[INFO] 
+[INFO] ------------< com.frauddetection:fraud-detection-platform >-------------
+[INFO] Building Fraud Detection Platform 1.0.0-SNAPSHOT                   [1/8]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ fraud-detection-platform ---
+[INFO] 
+[INFO] --- install:3.1.2:install (default-install) @ fraud-detection-platform ---
+[INFO] Installing D:\Projects\fraud-detection\pom.xml to C:\Users\win10\.m2\repository\com\frauddetection\fraud-detection-platform\1.0.0-SNAPSHOT\fraud-detection-platform-1.0.0-SNAPSHOT.pom
+[INFO] 
+[INFO] ---------------------< com.frauddetection:common >----------------------
+[INFO] Building Common Shared Library 1.0.0-SNAPSHOT                      [2/8]
+[INFO]   from common\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ common ---
+[INFO] Deleting D:\Projects\fraud-detection\common\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ common ---
+[INFO] skip non existing resourceDirectory D:\Projects\fraud-detection\common\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ common ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 11 source files with javac [debug target 25] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ common ---
+[INFO] skip non existing resourceDirectory D:\Projects\fraud-detection\common\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ common ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ common ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ common ---
+[INFO] Building jar: D:\Projects\fraud-detection\common\target\common-1.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- install:3.1.2:install (default-install) @ common ---
+[INFO] Installing D:\Projects\fraud-detection\common\pom.xml to C:\Users\win10\.m2\repository\com\frauddetection\common\1.0.0-SNAPSHOT\common-1.0.0-SNAPSHOT.pom
+[INFO] Installing D:\Projects\fraud-detection\common\target\common-1.0.0-SNAPSHOT.jar to C:\Users\win10\.m2\repository\com\frauddetection\common\1.0.0-SNAPSHOT\common-1.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] -------------------< com.frauddetection:api-gateway >-------------------
+[INFO] Building API Gateway 1.0.0-SNAPSHOT                                [3/8]
+[INFO]   from api-gateway\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ api-gateway ---
+[INFO] Deleting D:\Projects\fraud-detection\api-gateway\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ api-gateway ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ api-gateway ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 3 source files with javac [debug target 25] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ api-gateway ---
+[INFO] skip non existing resourceDirectory D:\Projects\fraud-detection\api-gateway\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ api-gateway ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ api-gateway ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ api-gateway ---
+[INFO] Building jar: D:\Projects\fraud-detection\api-gateway\target\api-gateway-1.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- spring-boot:4.0.3:repackage (default) @ api-gateway ---
+[INFO] Replacing main artifact D:\Projects\fraud-detection\api-gateway\target\api-gateway-1.0.0-SNAPSHOT.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to D:\Projects\fraud-detection\api-gateway\target\api-gateway-1.0.0-SNAPSHOT.jar.original
+[INFO] 
+[INFO] --- install:3.1.2:install (default-install) @ api-gateway ---
+[INFO] Installing D:\Projects\fraud-detection\api-gateway\pom.xml to C:\Users\win10\.m2\repository\com\frauddetection\api-gateway\1.0.0-SNAPSHOT\api-gateway-1.0.0-SNAPSHOT.pom
+[INFO] Installing D:\Projects\fraud-detection\api-gateway\target\api-gateway-1.0.0-SNAPSHOT.jar to C:\Users\win10\.m2\repository\com\frauddetection\api-gateway\1.0.0-SNAPSHOT\api-gateway-1.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] ---------------< com.frauddetection:transaction-service >---------------
+[INFO] Building Transaction Service 1.0.0-SNAPSHOT                        [4/8]
+[INFO]   from transaction-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ transaction-service ---
+[INFO] Deleting D:\Projects\fraud-detection\transaction-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ transaction-service ---
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ transaction-service ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 10 source files with javac [debug target 25] to target\classes
+[WARNING] /D:/Projects/fraud-detection/transaction-service/src/main/java/com/frauddetection/transaction/config/KafkaProducerConfig.java:[28,66] org.springframework.kafka.support.serializer.JsonSerializer in org.springframework.kafka.support.serializer has been deprecated and marked for removal
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ transaction-service ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ transaction-service ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 5 source files with javac [debug target 25] to target\test-classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/Projects/fraud-detection/transaction-service/src/test/java/com/frauddetection/transaction/TransactionKafkaPipelineIT.java:[9,63] package org.springframework.boot.test.autoconfigure.web.servlet does not exist
+[ERROR] /D:/Projects/fraud-detection/transaction-service/src/test/java/com/frauddetection/transaction/TransactionKafkaPipelineIT.java:[37,2] cannot find symbol
+  symbol: class AutoConfigureMockMvc
+[ERROR] /D:/Projects/fraud-detection/transaction-service/src/test/java/com/frauddetection/transaction/controller/TransactionControllerTest.java:[10,63] package org.springframework.boot.test.autoconfigure.web.servlet does not exist
+[ERROR] /D:/Projects/fraud-detection/transaction-service/src/test/java/com/frauddetection/transaction/controller/TransactionControllerTest.java:[36,2] cannot find symbol
+  symbol: class AutoConfigureMockMvc
+[INFO] 4 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for Fraud Detection Platform 1.0.0-SNAPSHOT:
+[INFO] 
+[INFO] Fraud Detection Platform ........................... SUCCESS [  0.264 s]
+[INFO] Common Shared Library .............................. SUCCESS [  3.709 s]
+[INFO] API Gateway ........................................ SUCCESS [  3.216 s]
+[INFO] Transaction Service ................................ FAILURE [  4.205 s]
+[INFO] Risk Engine Service ................................ SKIPPED
+[INFO] Fraud Decision Service ............................. SKIPPED
+[INFO] Notification Service ............................... SKIPPED
+[INFO] Analytics Service .................................. SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  11.806 s
+[INFO] Finished at: 2026-03-01T02:04:34+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:testCompile (default-testCompile) on project transaction-service: Compilation failure: Compilation failure: 
+[ERROR] /D:/Projects/fraud-detection/transaction-service/src/test/java/com/frauddetection/transaction/TransactionKafkaPipelineIT.java:[9,63] package org.springframework.boot.test.autoconfigure.web.servlet does not exist
+[ERROR] /D:/Projects/fraud-detection/transaction-service/src/test/java/com/frauddetection/transaction/TransactionKafkaPipelineIT.java:[37,2] cannot find symbol
+[ERROR]   symbol: class AutoConfigureMockMvc
+[ERROR] /D:/Projects/fraud-detection/transaction-service/src/test/java/com/frauddetection/transaction/controller/TransactionControllerTest.java:[10,63] package org.springframework.boot.test.autoconfigure.web.servlet does not exist
+[ERROR] /D:/Projects/fraud-detection/transaction-service/src/test/java/com/frauddetection/transaction/controller/TransactionControllerTest.java:[36,2] cannot find symbol
+[ERROR]   symbol: class AutoConfigureMockMvc
+[ERROR] -> [Help 1]
 [ERROR] 
 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
 [ERROR] Re-run Maven using the -X switch to enable full debug logging.
 [ERROR] 
 [ERROR] For more information about the errors and possible solutions, please read the following articles:
-[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/ProjectBuildingException
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :transaction-service
