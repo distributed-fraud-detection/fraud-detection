@@ -18,6 +18,7 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.web.client.RestClient;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.Collections;
 import org.apache.kafka.clients.consumer.Consumer;
 
@@ -84,14 +85,15 @@ class TransactionServiceIT extends AbstractIntegrationTest {
         String txId = response.getBody().getTransactionId();
         assertThat(txId).isNotBlank();
 
-        // Assert DB row exists
-        assertThat(transactionRepository.findById(txId)).isPresent();
+        // Assert DB row exists — look up by business key (transactionId) not surrogate
+        // PK
+        assertThat(transactionRepository.findByTransactionId(txId)).isPresent();
 
         // Assert Kafka event published
         try (Consumer<String, TransactionCreatedEvent> consumer = consumerFactory.createConsumer("it-group", null)) {
             consumer.subscribe(Collections.singletonList(transactionsTopic));
             ConsumerRecord<String, TransactionCreatedEvent> record = KafkaTestUtils.getSingleRecord(consumer,
-                    transactionsTopic, 10_000);
+                    transactionsTopic, Duration.ofSeconds(10));
             assertThat(record).isNotNull();
             assertThat(record.value().getTransactionId()).isEqualTo(txId);
             assertThat(record.value().getUserId()).isEqualTo("user-it-01");

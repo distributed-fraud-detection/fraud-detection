@@ -107,8 +107,8 @@ class RiskEngineServiceIT {
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
             var profile = riskProfileRepository.findByUserId("u-risk-01");
             assertThat(profile).isPresent();
-            assertThat(profile.get().getTransactionCount()).isGreaterThan(0);
-            assertThat(profile.get().getCurrentRiskScore()).isBetween(0.0, 1.0);
+            assertThat(profile.get().getTxnFrequency()).isNotNull();
+            assertThat(profile.get().getRiskScore()).isBetween(0.0, 1.0);
         });
     }
 

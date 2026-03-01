@@ -9,15 +9,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.web.client.RestClient;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -70,8 +70,8 @@ class FraudDecisionServiceIT {
     @Autowired
     private FraudCaseRepository fraudCaseRepository;
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+    @LocalServerPort
+    private int port;
 
     @Value("${kafka.topics.risk-scored:risk.scored}")
     private String riskScoredTopic;
@@ -99,9 +99,9 @@ class FraudDecisionServiceIT {
         kafkaTemplate.send(riskScoredTopic, "u-it-01", buildRiskEvent("tx-block-01", 0.92));
 
         await().atMost(15, TimeUnit.SECONDS).untilAsserted(() -> {
-            var cases = fraudCaseRepository.findByTransactionId("tx-block-01");
-            assertThat(cases).isNotEmpty();
-            assertThat(cases.get(0).getDecision().name()).isEqualTo("BLOCK");
+            // findByTransactionId returns Optional<FraudCase>, not List
+            FraudCase fraudCase = fraudCaseRepository.findByTransactionId("tx-block-01").orElseThrow();
+            assertThat(fraudCase.getDecision().name()).isEqualTo("BLOCK");
         });
     }
 
@@ -111,9 +111,9 @@ class FraudDecisionServiceIT {
         kafkaTemplate.send(riskScoredTopic, "u-it-01", buildRiskEvent("tx-review-01", 0.73));
 
         await().atMost(15, TimeUnit.SECONDS).untilAsserted(() -> {
-            var cases = fraudCaseRepository.findByTransactionId("tx-review-01");
-            assertThat(cases).isNotEmpty();
-            assertThat(cases.get(0).getDecision().name()).isEqualTo("REVIEW");
+            // findByTransactionId returns Optional<FraudCase>, not List
+            FraudCase fraudCase = fraudCaseRepository.findByTransactionId("tx-review-01").orElseThrow();
+            assertThat(fraudCase.getDecision().name()).isEqualTo("REVIEW");
         });
     }
 
@@ -129,17 +129,20 @@ class FraudDecisionServiceIT {
                 .build();
         FraudCase saved = fraudCaseRepository.save(pending);
 
-        // Call the review endpoint
-        var body = new org.springframework.http.HttpEntity<>(
-                java.util.Map.of("action", "APPROVE"));
-        ResponseEntity<String> response = restTemplate.exchange(
-                "/api/fraud-cases/" + saved.getCaseId() + "/review",
-                HttpMethod.PUT, body, String.class);
+        // Call the review endpoint via RestClient (Spring Boot 4; TestRestTemplate
+        // removed)
+        RestClient restClient = RestClient.create("http://localhost:" + port);
+        ResponseEntity<String> response = restClient.put()
+                .uri("/api/fraud-cases/" + saved.getCaseId() + "/review")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(java.util.Map.of("action", "APPROVE"))
+                .retrieve()
+                .toEntity(String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        // Verify in DB
-        FraudCase updated = fraudCaseRepository.findById(saved.getCaseId()).orElseThrow();
+        // Verify in DB — findByCaseId(String) uses business key, not surrogate Long PK
+        FraudCase updated = fraudCaseRepository.findByCaseId(saved.getCaseId()).orElseThrow();
         assertThat(updated.getDecision().name()).isEqualTo("APPROVE");
     }
 }

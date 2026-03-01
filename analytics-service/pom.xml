@@ -26,6 +26,20 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-batch</artifactId>
         </dependency>
+        <!-- Explicit version pins: Spring Boot 4.0.3 uses Spring Batch 6.0.2.
+             spring-batch-core includes Job/Step/JobParameters.
+             spring-batch-infrastructure (part of spring-batch-core in SB6) is needed
+             for ItemReader/ItemWriter/ItemProcessor/JdbcCursorItemReader etc. -->
+        <dependency>
+            <groupId>org.springframework.batch</groupId>
+            <artifactId>spring-batch-core</artifactId>
+            <version>6.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.batch</groupId>
+            <artifactId>spring-batch-infrastructure</artifactId>
+            <version>6.0.2</version>
+        </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -75,6 +89,32 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <!--
+                      Use -proc:none to completely disable annotation processing isolation.
+                      This forces javac to use the full compile classpath (including spring-batch-core)
+                      rather than a narrowed annotation-processor-only classpath.
+                      Lombok annotations still work: the @Builder/@Slf4j etc. are handled
+                      by Lombok's compile-time annotation processing via the compilerArgs.
+                    -->
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <compilerArgs>
+                        <arg>-proc:full</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
