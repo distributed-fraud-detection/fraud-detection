@@ -50,7 +50,6 @@ class TransactionServiceTest {
     @BeforeEach
     void setUp() {
         ReflectionTestUtils.setField(service, "transactionsTopic", "transactions.created");
-        when(transactionRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
     }
 
     private TransactionDTO dto(String userId) {
@@ -75,6 +74,7 @@ class TransactionServiceTest {
                 .transactionId("tx-test").userId("u001")
                 .amount(BigDecimal.valueOf(1000)).location("Mumbai")
                 .merchantType("E-Commerce").build());
+        when(transactionRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         TransactionDTO result = service.createTransaction(req);
 
