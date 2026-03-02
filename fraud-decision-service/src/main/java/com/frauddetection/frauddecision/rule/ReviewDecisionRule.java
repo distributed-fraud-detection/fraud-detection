@@ -20,7 +20,7 @@ public class ReviewDecisionRule implements DecisionRule {
 
     @Override
     public boolean matches(RiskScoredEvent event) {
-        return event.getRiskScore() >= props.getReviewThreshold();
+        return event.getRiskScore() > props.getReviewThreshold();
     }
 
     @Override
