@@ -9,6 +9,7 @@ import com.frauddetection.frauddecision.rule.ApproveDecisionRule;
 import com.frauddetection.frauddecision.rule.BlockDecisionRule;
 import com.frauddetection.frauddecision.rule.ReviewDecisionRule;
 import com.frauddetection.frauddecision.service.FraudDecisionService;
+import com.frauddetection.frauddecision.service.impl.FraudDecisionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,7 @@ class FraudDecisionConsumerTest {
     void setUp() {
         when(fraudCaseRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
         DecisionProperties props = new DecisionProperties(); // uses defaults: block=0.80, review=0.60
-        service = new FraudDecisionService(
+        service = new FraudDecisionServiceImpl(
                 List.of(new BlockDecisionRule(props), new ReviewDecisionRule(props), new ApproveDecisionRule()),
                 fraudCaseRepository,
                 kafkaTemplate

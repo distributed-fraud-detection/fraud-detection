@@ -1,5 +1,6 @@
 package com.frauddetection.transaction.service;
 
+import com.frauddetection.transaction.service.impl.RateLimitServiceImpl;
 import com.frauddetection.common.exception.RateLimitExceededException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,11 +25,11 @@ class RateLimitServiceTest {
     @Mock
     private ValueOperations<String, Object> valueOperations;
 
-    private RateLimitService rateLimitService;
+    private RateLimitServiceImpl rateLimitService;
 
     @BeforeEach
     void setUp() {
-        rateLimitService = new RateLimitService(redisTemplate);
+        rateLimitService = new RateLimitServiceImpl(redisTemplate);
         ReflectionTestUtils.setField(rateLimitService, "maxPerMinute", 10);
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
     }

@@ -6,6 +6,7 @@ import com.frauddetection.frauddecision.entity.FraudCase;
 import com.frauddetection.frauddecision.repository.FraudCaseRepository;
 import com.frauddetection.frauddecision.rule.DecisionResult;
 import com.frauddetection.frauddecision.rule.DecisionRule;
+import com.frauddetection.frauddecision.service.impl.FraudDecisionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ class FraudDecisionServiceTest {
     private KafkaTemplate<String, FraudDecisionMadeEvent> kafkaTemplate;
 
     @InjectMocks
-    private FraudDecisionService fraudDecisionService;
+    private FraudDecisionServiceImpl fraudDecisionService;
 
     @BeforeEach
     void setUp() {

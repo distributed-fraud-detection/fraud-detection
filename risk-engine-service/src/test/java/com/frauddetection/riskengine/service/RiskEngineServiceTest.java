@@ -4,6 +4,7 @@ import com.frauddetection.common.events.RiskScoredEvent;
 import com.frauddetection.common.events.TransactionCreatedEvent;
 import com.frauddetection.riskengine.entity.RiskProfile;
 import com.frauddetection.riskengine.repository.RiskProfileRepository;
+import com.frauddetection.riskengine.service.impl.RiskEngineServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,7 @@ class RiskEngineServiceTest {
     private KafkaTemplate<String, RiskScoredEvent> kafkaTemplate;
 
     @InjectMocks
-    private RiskEngineService riskEngineService;
+    private RiskEngineServiceImpl riskEngineService;
 
     @BeforeEach
     void setUp() {

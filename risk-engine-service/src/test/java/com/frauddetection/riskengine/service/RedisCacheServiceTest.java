@@ -1,5 +1,6 @@
 package com.frauddetection.riskengine.service;
 
+import com.frauddetection.riskengine.service.impl.RedisCacheServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,11 +29,11 @@ class RedisCacheServiceTest {
     @Mock
     private ListOperations<String, Object> listOps;
 
-    private RedisCacheService redisCacheService;
+    private RedisCacheServiceImpl redisCacheService;
 
     @BeforeEach
     void setUp() {
-        redisCacheService = new RedisCacheService(redisTemplate);
+        redisCacheService = new RedisCacheServiceImpl(redisTemplate);
         when(redisTemplate.opsForHash()).thenReturn(hashOps);
         when(redisTemplate.opsForValue()).thenReturn(valueOps);
         when(redisTemplate.opsForList()).thenReturn(listOps);

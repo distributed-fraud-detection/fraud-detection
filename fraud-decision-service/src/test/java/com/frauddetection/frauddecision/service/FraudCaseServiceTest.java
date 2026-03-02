@@ -4,6 +4,7 @@ import com.frauddetection.common.dto.FraudCaseDTO;
 import com.frauddetection.common.exception.ResourceNotFoundException;
 import com.frauddetection.frauddecision.entity.FraudCase;
 import com.frauddetection.frauddecision.repository.FraudCaseRepository;
+import com.frauddetection.frauddecision.service.impl.FraudCaseServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +30,7 @@ class FraudCaseServiceTest {
     private FraudCaseRepository fraudCaseRepository;
 
     @InjectMocks
-    private FraudCaseService fraudCaseService;
+    private FraudCaseServiceImpl fraudCaseService;
 
     private FraudCase sampleCase(String caseId) {
         return FraudCase.builder()
