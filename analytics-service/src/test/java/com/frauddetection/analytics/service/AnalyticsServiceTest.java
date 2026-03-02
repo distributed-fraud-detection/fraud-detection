@@ -3,6 +3,7 @@ package com.frauddetection.analytics.service;
 import com.frauddetection.analytics.batch.BatchJobLauncher;
 import com.frauddetection.analytics.entity.AggregatedMetric;
 import com.frauddetection.analytics.repository.AggregatedMetricRepository;
+import com.frauddetection.analytics.service.impl.AnalyticsServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,7 +40,7 @@ class AnalyticsServiceTest {
     private BatchJobLauncher batchJobLauncher;
 
     @InjectMocks
-    private AnalyticsService analyticsService;
+    private AnalyticsServiceImpl analyticsService;
 
     private AggregatedMetric metric(double fraudRate) {
         AggregatedMetric m = new AggregatedMetric();

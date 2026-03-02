@@ -3,6 +3,7 @@ package com.frauddetection.notification.service;
 import com.frauddetection.common.events.FraudDecisionMadeEvent;
 import com.frauddetection.notification.entity.Notification;
 import com.frauddetection.notification.repository.NotificationRepository;
+import com.frauddetection.notification.service.impl.NotificationServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +36,7 @@ class NotificationServiceTest {
     private NotificationRepository notificationRepository;
 
     @InjectMocks
-    private NotificationService notificationService;
+    private NotificationServiceImpl notificationService;
 
     private FraudDecisionMadeEvent buildEvent(String caseId, String decision) {
         return FraudDecisionMadeEvent.builder()

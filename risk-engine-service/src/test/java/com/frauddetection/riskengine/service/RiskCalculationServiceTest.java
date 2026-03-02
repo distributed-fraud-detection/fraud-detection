@@ -6,6 +6,7 @@ import com.frauddetection.riskengine.service.scoring.AmountScoringFactor;
 import com.frauddetection.riskengine.service.scoring.FrequencyScoringFactor;
 import com.frauddetection.riskengine.service.scoring.FraudHistoryScoringFactor;
 import com.frauddetection.riskengine.service.scoring.LocationScoringFactor;
+import com.frauddetection.riskengine.service.impl.RiskCalculationServiceImpl;
 import com.frauddetection.riskengine.service.scoring.MerchantScoringFactor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,13 +22,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class RiskCalculationServiceTest {
 
-    private RiskCalculationService service;
+    private RiskCalculationServiceImpl service;
 
     @BeforeEach
     void setUp() {
         // Use default thresholds (all fields pre-initialized via Lombok @Data defaults)
         RiskThresholds thresholds = new RiskThresholds();
-        service = new RiskCalculationService(List.of(
+        service = new RiskCalculationServiceImpl(List.of(
                 new AmountScoringFactor(thresholds),
                 new LocationScoringFactor(thresholds),
                 new MerchantScoringFactor(thresholds),
