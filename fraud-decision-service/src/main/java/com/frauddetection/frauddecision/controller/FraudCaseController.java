@@ -39,8 +39,8 @@ public class FraudCaseController {
      */
     @GetMapping
     public ResponseEntity<Page<FraudCaseDTO>> getAllCases(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "20") int size) {
         return ResponseEntity.ok(fraudCaseService.getAllCases(page, size));
     }
 
@@ -48,7 +48,7 @@ public class FraudCaseController {
      * GET /api/fraud-cases/{id}
      */
     @GetMapping("/{id}")
-    public ResponseEntity<FraudCaseDTO> getCase(@PathVariable String id) {
+    public ResponseEntity<FraudCaseDTO> getCase(@PathVariable("id") String id) {
         return ResponseEntity.ok(fraudCaseService.getCase(id));
     }
 
@@ -60,7 +60,7 @@ public class FraudCaseController {
      */
     @PutMapping("/{id}/review")
     public ResponseEntity<FraudCaseDTO> reviewCase(
-            @PathVariable String id,
+            @PathVariable("id") String id,
             @Valid @RequestBody ReviewRequest request) {
         return ResponseEntity.ok(fraudCaseService.reviewCase(id, request.getAction()));
     }
