@@ -70,7 +70,7 @@ class RiskCalculationServiceTest {
     @DisplayName("Offshore/flagged locations should increase score")
     void offshoreLocation_increasesScore() {
         double domestic = service.calculateRiskScore(event(1000, "Mumbai", "E-Commerce"), ctx(0, 1));
-        double offshore = service.calculateRiskScore(event(1000, "Lagos", "E-Commerce"), ctx(0, 1));
+        double offshore = service.calculateRiskScore(event(1000, "Offshore - Lagos", "E-Commerce"), ctx(0, 1));
         assertThat(offshore).isGreaterThan(domestic);
     }
 
