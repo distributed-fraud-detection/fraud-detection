@@ -3,6 +3,7 @@ package com.frauddetection.transaction.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frauddetection.common.dto.TransactionDTO;
 import com.frauddetection.common.exception.RateLimitExceededException;
+import com.frauddetection.transaction.exception.GlobalExceptionHandler;
 import com.frauddetection.transaction.service.TransactionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,6 +50,7 @@ class TransactionControllerTest {
     void setUp() {
         mockMvc = MockMvcBuilders
                 .standaloneSetup(transactionController)
+                .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
     }
 

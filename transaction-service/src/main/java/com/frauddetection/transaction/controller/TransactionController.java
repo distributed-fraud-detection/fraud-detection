@@ -33,7 +33,7 @@ public class TransactionController {
      * GET /api/transactions/{id}
      */
     @GetMapping("/{id}")
-    public ResponseEntity<TransactionDTO> getTransaction(@PathVariable String id) {
+    public ResponseEntity<TransactionDTO> getTransaction(@PathVariable("id") String id) {
         return ResponseEntity.ok(transactionService.getTransaction(id));
     }
 
@@ -43,9 +43,9 @@ public class TransactionController {
      */
     @GetMapping("/user/{userId}")
     public ResponseEntity<Page<TransactionDTO>> getUserTransactions(
-            @PathVariable String userId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @PathVariable("userId") String userId,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "20") int size) {
         return ResponseEntity.ok(transactionService.getTransactionsByUser(userId, page, size));
     }
 }
