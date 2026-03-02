@@ -14,6 +14,8 @@ public class TransactionDTO {
     @NotBlank(message = "User ID is required")
     private String userId;
 
+    private String userName;
+
     @NotNull(message = "Amount is required")
     @DecimalMin(value = "0.01", message = "Amount must be positive")
     private BigDecimal amount;
@@ -32,10 +34,12 @@ public class TransactionDTO {
     public TransactionDTO() {
     }
 
-    public TransactionDTO(String transactionId, String userId, BigDecimal amount, String location, String merchantType,
+    public TransactionDTO(String transactionId, String userId, String userName, BigDecimal amount, String location,
+            String merchantType,
             String status, LocalDateTime timestamp) {
         this.transactionId = transactionId;
         this.userId = userId;
+        this.userName = userName;
         this.amount = amount;
         this.location = location;
         this.merchantType = merchantType;
@@ -46,6 +50,7 @@ public class TransactionDTO {
     private TransactionDTO(Builder builder) {
         this.transactionId = builder.transactionId;
         this.userId = builder.userId;
+        this.userName = builder.userName;
         this.amount = builder.amount;
         this.location = builder.location;
         this.merchantType = builder.merchantType;
@@ -67,6 +72,14 @@ public class TransactionDTO {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public BigDecimal getAmount() {
@@ -116,6 +129,7 @@ public class TransactionDTO {
     public static class Builder {
         private String transactionId;
         private String userId;
+        private String userName;
         private BigDecimal amount;
         private String location;
         private String merchantType;
@@ -129,6 +143,11 @@ public class TransactionDTO {
 
         public Builder userId(String userId) {
             this.userId = userId;
+            return this;
+        }
+
+        public Builder userName(String userName) {
+            this.userName = userName;
             return this;
         }
 

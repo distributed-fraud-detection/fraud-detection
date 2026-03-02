@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -16,7 +16,6 @@ import java.util.List;
 public class TransactionController {
 
     private final TransactionService transactionService; // DIP: interface, not concrete class
-
 
     /**
      * Submit a new transaction for fraud screening.
@@ -43,8 +42,10 @@ public class TransactionController {
      * GET /api/transactions/user/{userId}
      */
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<TransactionDTO>> getUserTransactions(
-            @PathVariable String userId) {
-        return ResponseEntity.ok(transactionService.getTransactionsByUser(userId));
+    public ResponseEntity<Page<TransactionDTO>> getUserTransactions(
+            @PathVariable String userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(transactionService.getTransactionsByUser(userId, page, size));
     }
 }

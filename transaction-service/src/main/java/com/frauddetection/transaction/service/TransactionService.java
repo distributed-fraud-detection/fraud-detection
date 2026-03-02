@@ -2,7 +2,7 @@ package com.frauddetection.transaction.service;
 
 import com.frauddetection.common.dto.TransactionDTO;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 /**
  * Service interface for transaction operations.
@@ -40,8 +40,5 @@ public interface TransactionService {
      */
     TransactionDTO getTransaction(String transactionId);
 
-    /**
-     * Return all transactions for a given user, ordered newest-first.
-     */
-    List<TransactionDTO> getTransactionsByUser(String userId);
+    Page<TransactionDTO> getTransactionsByUser(String userId, int page, int size);
 }

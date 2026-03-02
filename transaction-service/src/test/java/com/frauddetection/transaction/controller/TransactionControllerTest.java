@@ -16,6 +16,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -103,10 +105,14 @@ class TransactionControllerTest {
     @Test
     @DisplayName("GET /api/transactions/user/{userId} → 200 with list")
     void getUserTransactions_returns200() throws Exception {
-        when(transactionService.getTransactionsByUser("u001")).thenReturn(List.of(sampleDTO()));
+        Page<TransactionDTO> pagedResponse = new PageImpl<>(List.of(sampleDTO()));
+        when(transactionService.getTransactionsByUser("u001", 0, 20)).thenReturn(pagedResponse);
 
-        mockMvc.perform(get("/api/transactions/user/u001"))
+        mockMvc.perform(get("/api/transactions/user/u001")
+                .param("page", "0")
+                .param("size", "20")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].userId").value("u001"));
+                .andExpect(jsonPath("$.content[0].userId").value("u001"));
     }
 }

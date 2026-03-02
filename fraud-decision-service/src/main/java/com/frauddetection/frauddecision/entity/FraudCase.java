@@ -36,15 +36,18 @@ public class FraudCase {
     private String userId;
 
     @Column(nullable = false)
+    private String userName;
+
+    @Column(nullable = false)
     private Double riskScore;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Decision decision;  // APPROVE | BLOCK | REVIEW
+    private Decision decision; // APPROVE | BLOCK | REVIEW
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private CaseStatus status;  // PENDING | APPROVED | REJECTED | BLOCKED
+    private CaseStatus status; // PENDING | APPROVED | REJECTED | BLOCKED
 
     @Column
     private String flagReason;

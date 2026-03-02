@@ -8,6 +8,7 @@ public class FraudCaseDTO {
     private String caseId;
     private String transactionId;
     private String userId;
+    private String userName;
     private Double riskScore;
     private String decision; // APPROVE | BLOCK | REVIEW
     private String status; // PENDING | APPROVED | REJECTED | BLOCKED
@@ -22,11 +23,13 @@ public class FraudCaseDTO {
     public FraudCaseDTO() {
     }
 
-    public FraudCaseDTO(String caseId, String transactionId, String userId, Double riskScore, String decision,
+    public FraudCaseDTO(String caseId, String transactionId, String userId, String userName, Double riskScore,
+            String decision,
             String status, String flagReason, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.caseId = caseId;
         this.transactionId = transactionId;
         this.userId = userId;
+        this.userName = userName;
         this.riskScore = riskScore;
         this.decision = decision;
         this.status = status;
@@ -39,6 +42,7 @@ public class FraudCaseDTO {
         this.caseId = builder.caseId;
         this.transactionId = builder.transactionId;
         this.userId = builder.userId;
+        this.userName = builder.userName;
         this.riskScore = builder.riskScore;
         this.decision = builder.decision;
         this.status = builder.status;
@@ -69,6 +73,14 @@ public class FraudCaseDTO {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Double getRiskScore() {
@@ -127,6 +139,7 @@ public class FraudCaseDTO {
         private String caseId;
         private String transactionId;
         private String userId;
+        private String userName;
         private Double riskScore;
         private String decision;
         private String status;
@@ -146,6 +159,11 @@ public class FraudCaseDTO {
 
         public Builder userId(String userId) {
             this.userId = userId;
+            return this;
+        }
+
+        public Builder userName(String userName) {
+            this.userName = userName;
             return this;
         }
 

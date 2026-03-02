@@ -12,8 +12,9 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Core transaction service — pure orchestration, no cross-cutting concerns.
@@ -74,10 +75,9 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionDTO> getTransactionsByUser(String userId) {
-        return transactionRepository.findByUserIdOrderByTimestampDesc(userId)
-                .stream()
-                .map(mapper::toDTO)
-                .collect(Collectors.toList());
+    public Page<TransactionDTO> getTransactionsByUser(String userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return transactionRepository.findByUserIdOrderByTimestampDesc(userId, pageable)
+                .map(mapper::toDTO);
     }
 }

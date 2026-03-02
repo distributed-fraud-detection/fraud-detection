@@ -31,7 +31,8 @@ public class AggregatedMetric {
     private Long fraudCount;
     private Long reviewCount;
     private Long blockCount;
-    private Double fraudRate;        // fraudCount / totalTransactions
+    private Long approveCount;
+    private Double fraudRate; // fraudCount / totalTransactions
     private String topRiskGeography;
     private Double avgRiskScore;
 

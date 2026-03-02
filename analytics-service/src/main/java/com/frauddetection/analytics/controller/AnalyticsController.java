@@ -35,7 +35,7 @@ public class AnalyticsController {
      */
     @GetMapping("/daily-summary")
     public ResponseEntity<List<AggregatedMetric>> getDailySummary(
-            @RequestParam(defaultValue = "14") int days) {
+            @RequestParam(value = "days", defaultValue = "14") int days) {
         return ResponseEntity.ok(analyticsService.getDailySummary(days));
     }
 
@@ -44,7 +44,7 @@ public class AnalyticsController {
      */
     @GetMapping("/top-risk-users")
     public ResponseEntity<List<AggregatedMetric>> getTopRiskUsers(
-            @RequestParam(defaultValue = "10") int limit) {
+            @RequestParam(value = "limit", defaultValue = "10") int limit) {
         return ResponseEntity.ok(analyticsService.getTopRiskUsers(limit));
     }
 

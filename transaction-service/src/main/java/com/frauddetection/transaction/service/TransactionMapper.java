@@ -26,6 +26,7 @@ public class TransactionMapper {
     public Transaction toEntity(TransactionDTO dto) {
         return Transaction.builder()
                 .userId(dto.getUserId())
+                .userName(dto.getUserName())
                 .amount(dto.getAmount())
                 .location(dto.getLocation())
                 .merchantType(dto.getMerchantType())
@@ -37,6 +38,7 @@ public class TransactionMapper {
         return TransactionDTO.builder()
                 .transactionId(t.getTransactionId())
                 .userId(t.getUserId())
+                .userName(t.getUserName())
                 .amount(t.getAmount())
                 .location(t.getLocation())
                 .merchantType(t.getMerchantType())

@@ -64,6 +64,7 @@ public class FraudCaseService {
                 .caseId(fc.getCaseId())
                 .transactionId(fc.getTransactionId())
                 .userId(fc.getUserId())
+                .userName(fc.getUserName())
                 .riskScore(fc.getRiskScore())
                 .decision(fc.getDecision().name())
                 .status(fc.getStatus().name())

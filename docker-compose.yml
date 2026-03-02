@@ -327,13 +327,13 @@ services:
     build:
       context: ../fraud-detection-ui
       dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:8080
     container_name: fraud-detection-ui
     depends_on:
       - api-gateway
     ports:
       - "3000:3000"
-    environment:
-      VITE_API_BASE_URL: http://localhost:8080
 
 volumes:
   transactions-data:

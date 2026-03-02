@@ -56,6 +56,9 @@ public class Transaction {
     @Column(nullable = false, updatable = false)
     private String userId;
 
+    @Column(nullable = false, updatable = false)
+    private String userName;
+
     @Column(nullable = false, precision = 15, scale = 2, updatable = false)
     private BigDecimal amount;
 
@@ -86,6 +89,7 @@ public class Transaction {
                 .id(this.id)
                 .transactionId(this.transactionId)
                 .userId(this.userId)
+                .userName(this.userName)
                 .amount(this.amount)
                 .location(this.location)
                 .merchantType(this.merchantType)
