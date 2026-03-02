@@ -1,7 +1,6 @@
 package com.frauddetection.transaction.service;
 
 import com.frauddetection.transaction.service.impl.RateLimitServiceImpl;
-
 import com.frauddetection.common.exception.RateLimitExceededException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
