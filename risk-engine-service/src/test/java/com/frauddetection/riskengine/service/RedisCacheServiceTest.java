@@ -34,14 +34,13 @@ class RedisCacheServiceTest {
     @BeforeEach
     void setUp() {
         redisCacheService = new RedisCacheServiceImpl(redisTemplate);
-        when(redisTemplate.opsForHash()).thenReturn(hashOps);
-        when(redisTemplate.opsForValue()).thenReturn(valueOps);
-        when(redisTemplate.opsForList()).thenReturn(listOps);
     }
 
     @Test
     @DisplayName("cacheRiskScore stores score+level and sets TTL")
     void cacheRiskScore_storesValues() {
+        when(redisTemplate.opsForHash()).thenReturn(hashOps);
+
         redisCacheService.cacheRiskScore("u1", 0.66, "MEDIUM");
 
         verify(hashOps).put("user:risk:u1", "riskScore", "0.66");
@@ -52,6 +51,7 @@ class RedisCacheServiceTest {
     @Test
     @DisplayName("getCachedRiskScore parses cached value")
     void getCachedRiskScore_parsesValue() {
+        when(redisTemplate.opsForHash()).thenReturn(hashOps);
         when(hashOps.get("user:risk:u1", "riskScore")).thenReturn("0.77");
 
         Double score = redisCacheService.getCachedRiskScore("u1");
@@ -62,6 +62,7 @@ class RedisCacheServiceTest {
     @Test
     @DisplayName("getCachedRiskScore returns null when absent")
     void getCachedRiskScore_absent_returnsNull() {
+        when(redisTemplate.opsForHash()).thenReturn(hashOps);
         when(hashOps.get("user:risk:u1", "riskScore")).thenReturn(null);
 
         assertThat(redisCacheService.getCachedRiskScore("u1")).isNull();
@@ -70,6 +71,7 @@ class RedisCacheServiceTest {
     @Test
     @DisplayName("getRecentFraudCount defaults to zero when missing")
     void getRecentFraudCount_missing_returnsZero() {
+        when(redisTemplate.opsForHash()).thenReturn(hashOps);
         when(hashOps.get("user:risk:u1", "fraudCount")).thenReturn(null);
 
         assertThat(redisCacheService.getRecentFraudCount("u1")).isZero();
@@ -78,6 +80,8 @@ class RedisCacheServiceTest {
     @Test
     @DisplayName("incrementFraudCount increments and sets TTL")
     void incrementFraudCount_incrementsAndExpires() {
+        when(redisTemplate.opsForHash()).thenReturn(hashOps);
+
         redisCacheService.incrementFraudCount("u1");
 
         verify(hashOps).increment("user:risk:u1", "fraudCount", 1);
@@ -87,6 +91,7 @@ class RedisCacheServiceTest {
     @Test
     @DisplayName("getRecentTxnCount parses value and defaults to zero")
     void getRecentTxnCount_parseAndDefault() {
+        when(redisTemplate.opsForValue()).thenReturn(valueOps);
         when(valueOps.get("user:txn_count:u1")).thenReturn("9");
         assertThat(redisCacheService.getRecentTxnCount("u1")).isEqualTo(9);
 
@@ -97,6 +102,8 @@ class RedisCacheServiceTest {
     @Test
     @DisplayName("addToHotList pushes, trims and expires")
     void addToHotList_updatesList() {
+        when(redisTemplate.opsForList()).thenReturn(listOps);
+
         redisCacheService.addToHotList("txn-1");
 
         verify(listOps).leftPush("hot:high-risk-transactions", "txn-1");
