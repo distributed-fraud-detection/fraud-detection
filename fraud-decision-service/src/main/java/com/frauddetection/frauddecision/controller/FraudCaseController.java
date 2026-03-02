@@ -1,11 +1,11 @@
 package com.frauddetection.frauddecision.controller;
 
 import com.frauddetection.common.dto.FraudCaseDTO;
+import com.frauddetection.frauddecision.dto.PaginatedResponse;
 import com.frauddetection.frauddecision.dto.ReviewRequest;
 import com.frauddetection.frauddecision.service.FraudCaseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,10 +38,10 @@ public class FraudCaseController {
      * Returns paginated fraud cases, newest first.
      */
     @GetMapping
-    public ResponseEntity<Page<FraudCaseDTO>> getAllCases(
+    public ResponseEntity<PaginatedResponse<FraudCaseDTO>> getAllCases(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "20") int size) {
-        return ResponseEntity.ok(fraudCaseService.getAllCases(page, size));
+        return ResponseEntity.ok(PaginatedResponse.from(fraudCaseService.getAllCases(page, size)));
     }
 
     /**

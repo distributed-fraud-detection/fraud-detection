@@ -13,10 +13,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.util.List;
+
+import com.frauddetection.frauddecision.exception.GlobalExceptionHandler;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
@@ -48,8 +52,14 @@ class FraudCaseControllerTest {
 
         @BeforeEach
         void setUp() {
+                LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
+                validator.afterPropertiesSet();
+
                 mockMvc = MockMvcBuilders
                                 .standaloneSetup(fraudCaseController)
+                                .setControllerAdvice(new GlobalExceptionHandler())
+                                .setValidator(validator)
+                                .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper))
                                 .build();
         }
 
